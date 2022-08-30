@@ -1,0 +1,4 @@
+BOT_TOKEN = "5416395354:AAGgu1bLRO2pJ_ZHlJIG_miGMGlcVt7SF6E"
+
+admins = []
+
