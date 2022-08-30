@@ -1,97 +1,80 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium import webdriver
+from arsenic import browsers
+from arsenic.services import Chromedriver
+from arsenic.actions import Mouse, chain
+from arsenic import get_session
 
-from PIL import Image
-from io import BytesIO
-import asyncio
+from bs4 import BeautifulSoup
+
 
 class Chrome:
     def __init__(self):
-        self.driver = None
-        self.chrome_options = webdriver.ChromeOptions()
-
-        self.chrome_options.add_argument('--disable-blink-features=AutomationControlled')
-        self.chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        """self.chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
         self.chrome_options.add_experimental_option('useAutomationExtension', False)
-        self.chrome_options.add_argument("--log-level=3")
-        self.chrome_options.add_argument("--disable-notifications")
         self.chrome_options.add_experimental_option("prefs",
-                                                    {"profile.default_content_setting_values.notifications": 2})
-        self.chrome_options.add_argument("--disable-extensions")
-        self.chrome_options.add_argument("--disable-gpu")
-        self.chrome_options.add_argument("--headless")
-        self.chrome_options.add_argument('--disable-dev-shm-usage')
-        self.chrome_options.add_argument("--window-size=1920,1080")
+                                                    {"profile.default_content_setting_values.notifications": 2})"""
 
-    async def get_url(self, find_url):
+        path_binary = r"C:\My_project\timetable_tusur\chrome_tools\chromedriver\chromedriver.exe"
+        self.chromedriver = Chromedriver(binary=path_binary)
+        self.browser = browsers.Chrome()
+        self.browser.capabilities = {"goog:chromeOptions": {"args": ["--headless", "--window-size=1920,1080",
+                                                                     "--disable-dev-shm-usage",
+                                                                     "--disable-extensions", "--disable-gpu",
+                                                                     "--log-level=3", "--disable-notifications",
+                                                                     "--disable-blink-features=AutomationControlled"]}}
+
+    async def get_table(self, find_url):
         try:
+            async with get_session(self.chromedriver, self.browser) as session:
+                await session.get(find_url)
+                await session.wait_for_element(20, 'html')
+                html = await session.get_page_source()
 
-            self.driver = webdriver.Chrome(executable_path="chrome_tools/chromedriver/chromedriver.exe",
-                                           options=self.chrome_options)
-            self.driver.get(find_url)
-            return True
-        except:
+                if "не дал результатов" in html:
+                    return {"photo": "", "caption": "Парсинг не дал результатов, повторите попытку"}
+                elif "Результаты поиска" in html:
+                    table = await session.get_element(
+                        '#wrapper > div:nth-child(9) > div.row')
+                    return {"photo": await table.get_screenshot(),
+                            "caption": "Повторите запрос одним из предложенных вариантов"}
+                elif "Расписание занятий группы" in html:
+                    target = await session.get_element(
+                        '#wrapper > div:nth-child(9) > div.timetable_wrapper > div:nth-child(3) > div > '
+                        'div:nth-child(2) > ul > '
+                        'li.training_type_practice.new-training-type-practice.margin-bottom-10')
+
+                    mouse = Mouse()
+                    actions = chain(mouse.move_to(target))
+                    await session.perform_actions(actions)
+
+                    table = await session.get_element(
+                        '#wrapper > div:nth-child(9) > div.timetable_wrapper > div:nth-child(3) > div')
+
+                    soup = BeautifulSoup(html, "lxml")
+                    info = soup.find("title").text.split(" — ")[0]
+                    more_info = soup.find("div", {"class": "col-md-12"}).text.replace("\n", "")
+
+                    return {"photo": await table.get_screenshot(), "caption": f"{info}\n<code>{more_info}</code>"}
+                elif "Расписание занятий преподавателя" in html:
+                    target = await session.get_element(
+                        '#wrapper > div:nth-child(9) > div.timetable_wrapper > div:nth-child(3) > div > ul > '
+                        'li.training_type_practice.new-training-type-practice.margin-bottom-10')
+
+                    mouse = Mouse()
+                    actions = chain(mouse.move_to(target))
+                    await session.perform_actions(actions)
+
+                    table = await session.get_element(
+                        '#wrapper > div:nth-child(9) > div.timetable_wrapper > div:nth-child(3) > div')
+
+
+                    soup = BeautifulSoup(html, "lxml")
+                    info = soup.find("title").text.split(" — ")[0]
+                    more_info = soup.find("div", {"class": "col-md-12"}).text.replace("\n", "")
+
+                    return {"photo": await table.get_screenshot(), "caption": f"{info}\n<code>{more_info}</code>"}
+                else:
+                    return {"photo": "", "caption": "Неизвестная ошибка"}
+        except Exception as e:
+            print(e)
             return False
 
-    async def get_page_source(self):
-        return self.driver.page_source
-
-    async def create_table_png(self):
-        try:
-            target = self.driver.find_element(By.XPATH, '//*[@id="wrapper"]/div[6]/div[2]/div[3]/div/div[2]/ul/li[4]')
-
-            actions = ActionChains(self.driver)
-            actions.move_to_element(target)
-            actions.perform()
-
-            element = self.driver.find_element(By.XPATH, '//*[@id="wrapper"]/div[6]/div[2]/div[3]/div')
-
-            img = Image.open(BytesIO(element.screenshot_as_png))
-
-            img_byte_arr = BytesIO()
-            img.save(img_byte_arr, format='PNG')
-            img_byte_arr = img_byte_arr.getvalue()
-
-            return img_byte_arr
-        except:
-            return False
-
-    async def create_table_png_teacher(self):
-        try:
-            target = self.driver.find_element(By.XPATH, '//*[@id="wrapper"]/div[6]/div[2]/div[3]/div/ul/li[3]')
-
-            actions = ActionChains(self.driver)
-            actions.move_to_element(target)
-            actions.perform()
-
-            element = self.driver.find_element(By.XPATH, '//*[@id="wrapper"]/div[6]/div[2]/div[3]/div')
-
-            img = Image.open(BytesIO(element.screenshot_as_png))
-
-            img_byte_arr = BytesIO()
-            img.save(img_byte_arr, format='PNG')
-            img_byte_arr = img_byte_arr.getvalue()
-
-            return img_byte_arr
-        except:
-            return False
-
-    async def create_choice_png(self):
-        try:
-            element = self.driver.find_element(By.XPATH, '//*[@id="wrapper"]/div[6]')
-
-            img = Image.open(BytesIO(element.screenshot_as_png))
-
-            img_byte_arr = BytesIO()
-            img.save(img_byte_arr, format='PNG')
-            img_byte_arr = img_byte_arr.getvalue()
-
-            return img_byte_arr
-        except:
-            return False
-
-    async def driver_quit(self):
-        self.driver.quit()
