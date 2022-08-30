@@ -34,6 +34,7 @@ async def input_name_handler(message: Message, state: FSMContext):
                                             m.chat.id, m.message_id,
                                             reply_markup=start_keyboard)
             else:
+                await bot.delete_message(m.chat.id, m.message_id)
                 await bot.send_photo(message.chat.id,
                                      result['photo'],
                                      caption=result['caption'],
