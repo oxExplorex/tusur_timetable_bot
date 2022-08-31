@@ -92,7 +92,12 @@ class Chrome:
                     info = soup.find("title").text.split(" — ")[0]
                     more_info = soup.find("div", {"class": "col-md-12"}).text.replace("\n", "")
 
-                    return {"photo": await table.get_screenshot(), "caption": f"{info}\n<code>{more_info}</code>"}
+                    reply_markup = InlineKeyboardMarkup()
+                    reply_markup.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
+
+                    return {"photo": await table.get_screenshot(),
+                            "caption": f"{info}\n<code>{more_info}</code>",
+                            "reply_markup": reply_markup}
                 elif "Расписание занятий преподавателя" in html:
                     target = await session.get_element(
                         '#wrapper > div:nth-child(9) > div.timetable_wrapper > div:nth-child(3) > div > ul > '
@@ -110,7 +115,12 @@ class Chrome:
                     info = soup.find("title").text.split(" — ")[0]
                     more_info = soup.find("div", {"class": "col-md-12"}).text.replace("\n", "")
 
-                    return {"photo": await table.get_screenshot(), "caption": f"{info}\n<code>{more_info}</code>"}
+                    reply_markup = InlineKeyboardMarkup()
+                    reply_markup.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
+
+                    return {"photo": await table.get_screenshot(),
+                            "caption": f"{info}\n<code>{more_info}</code>",
+                            "reply_markup": reply_markup}
                 elif "Расписание занятий в аудитории" in html:
                     target = await session.get_element(
                         '#wrapper > div:nth-child(9) > div.timetable_wrapper > '
@@ -129,7 +139,12 @@ class Chrome:
                     info = soup.find("title").text.split(" — ")[0]
                     more_info = soup.find("div", {"class": "col-md-12"}).text.replace("\n", "")
 
-                    return {"photo": await table.get_screenshot(), "caption": f"{info}\n<code>{more_info}</code>"}
+                    reply_markup = InlineKeyboardMarkup()
+                    reply_markup.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
+
+                    return {"photo": await table.get_screenshot(),
+                            "caption": f"{info}\n<code>{more_info}</code>",
+                            "reply_markup": reply_markup}
                 else:
                     return {"photo": "", "caption": "Неизвестная ошибка"}
         except Exception as e:

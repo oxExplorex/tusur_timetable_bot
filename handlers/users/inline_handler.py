@@ -29,22 +29,13 @@ async def again_get_timetable(call: CallbackQuery, state: FSMContext):
                                         m.chat.id, m.message_id,
                                         reply_markup=start_keyboard)
         else:
-            if "Выберете один их предложенных вариантов" in result['caption']:
-                await bot.delete_message(m.chat.id, m.message_id)
-                await bot.send_photo(message.chat.id,
-                                     result['photo'],
-                                     caption=result['caption'],
-                                     parse_mode="HTML",
-                                     reply_markup=result['reply_markup'])
-            else:
-                await bot.delete_message(m.chat.id, m.message_id)
-                reply_markup = InlineKeyboardMarkup()
-                reply_markup.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
-                await bot.send_photo(message.chat.id,
-                                     result['photo'],
-                                     caption=result['caption'],
-                                     parse_mode="HTML",
-                                     reply_markup=reply_markup)
+            await bot.delete_message(m.chat.id, m.message_id)
+            await bot.send_photo(message.chat.id,
+                                 photo=result['photo'],
+                                 caption=result['caption'],
+                                 parse_mode="HTML",
+                                 reply_markup=result['reply_markup'])
+
     else:
         await bot.delete_message(m.chat.id, m.message_id)
         await bot.send_message(message.chat.id,

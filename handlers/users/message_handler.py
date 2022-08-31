@@ -32,29 +32,25 @@ async def input_name_handler(message: Message, state: FSMContext):
                                             m.chat.id, m.message_id,
                                             reply_markup=start_keyboard)
             else:
-                if "Выберете" in result['caption']:
-                    await bot.delete_message(m.chat.id, m.message_id)
-                    await bot.send_photo(message.chat.id,
-                                         result['photo'],
-                                         caption=result['caption'],
-                                         parse_mode="HTML",
-                                         reply_markup=result['reply_markup'])
-                else:
-                    await bot.delete_message(m.chat.id, m.message_id)
-                    await bot.send_photo(message.chat.id,
-                                         result['photo'],
-                                         caption=result['caption'],
-                                         parse_mode="HTML")
+                await bot.delete_message(m.chat.id, m.message_id)
+                await bot.send_photo(message.chat.id,
+                                     photo=result['photo'],
+                                     caption=result['caption'],
+                                     parse_mode="HTML",
+                                     reply_markup=result['reply_markup'])
         else:
             await bot.delete_message(m.chat.id, m.message_id)
             await bot.send_message(message.chat.id,
-                                   "Ошибка парсинга, попробуйте еще раз",
+                                   text="Ошибка парсинга, попробуйте еще раз",
                                    reply_markup=start_keyboard)
 
     else:
         async with state.proxy() as data:
-            await bot.delete_message(data["input_name"]['chat_id'], data["input_name"]['message_id'])
-        await bot.send_message(message.chat.id, "Данный формат не поддерживается :/", reply_markup=start_keyboard)
+            await bot.delete_message(data["input_name"]['chat_id'],
+                                     data["input_name"]['message_id'])
+        await bot.send_message(message.chat.id,
+                               "Данный формат не поддерживается :/",
+                               reply_markup=start_keyboard)
     await state.finish()
 
 
