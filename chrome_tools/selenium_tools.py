@@ -1,10 +1,21 @@
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
 from arsenic import browsers
 from arsenic.services import Chromedriver
 from arsenic.actions import Mouse, chain
 from arsenic import get_session
 
 from bs4 import BeautifulSoup
+import structlog
+import logging
 
+logger = logging.getLogger('arsenic')
+
+def logger_factory():
+    return logger
+
+structlog.configure(logger_factory=logger_factory)
+logger.setLevel(logging.WARNING)
 
 class Chrome:
     def __init__(self):
@@ -12,6 +23,7 @@ class Chrome:
         self.chrome_options.add_experimental_option('useAutomationExtension', False)
         self.chrome_options.add_experimental_option("prefs",
                                                     {"profile.default_content_setting_values.notifications": 2})"""
+
 
         path_binary = r"C:\My_project\timetable_tusur\chrome_tools\chromedriver\chromedriver.exe"
         self.chromedriver = Chromedriver(binary=path_binary)
@@ -34,8 +46,35 @@ class Chrome:
                 elif "Результаты поиска" in html:
                     table = await session.get_element(
                         '#wrapper > div:nth-child(9) > div.row')
+
+                    soup = BeautifulSoup(html, "lxml")
+                    reply_markup = InlineKeyboardMarkup()
+                    temp_button = []
+                    for a in soup.find("ul", {"class": "list-inline"}).find_all("a"):
+                        group_id = a.text
+                        callback_data = 'get_https://timetable.tusur.ru' + a['href']  # faculties/fsu/groups/420-1
+                        if len(temp_button) == 3:
+                            a, b, c = temp_button
+                            reply_markup.add(a, b, c)
+                            temp_button = []
+                        temp_button.append(InlineKeyboardButton(text=group_id, callback_data=callback_data))
+                    if temp_button:
+                        ltb = len(temp_button)
+                        if ltb == 1:
+                            a = temp_button
+                            reply_markup.add(a)
+                        elif ltb == 2:
+                            a, b = temp_button
+                            reply_markup.add(a, b)
+                        elif ltb == 3:
+                            a, b, c = temp_button
+                            reply_markup.add(a, b, c)
+
+                    reply_markup.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
+
                     return {"photo": await table.get_screenshot(),
-                            "caption": "Повторите запрос одним из предложенных вариантов"}
+                            "caption": "Выберете один их предложенных вариантов",
+                            "reply_markup": reply_markup}
                 elif "Расписание занятий группы" in html:
                     target = await session.get_element(
                         '#wrapper > div:nth-child(9) > div.timetable_wrapper > div:nth-child(3) > div > '

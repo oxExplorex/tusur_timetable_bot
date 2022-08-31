@@ -5,10 +5,8 @@ from states.state_users import StorageUsers
 from keyboards.inline import start_keyboard
 
 from chrome_tools.selenium_tools import Chrome
-from bs4 import BeautifulSoup
 from loader import dp, bot
-from loguru import logger
-import asyncio
+
 
 @dp.message_handler(state=StorageUsers.input_name)
 async def input_name_handler(message: Message, state: FSMContext):
@@ -34,11 +32,19 @@ async def input_name_handler(message: Message, state: FSMContext):
                                             m.chat.id, m.message_id,
                                             reply_markup=start_keyboard)
             else:
-                await bot.delete_message(m.chat.id, m.message_id)
-                await bot.send_photo(message.chat.id,
-                                     result['photo'],
-                                     caption=result['caption'],
-                                     parse_mode="HTML")
+                if "Выберете" in result['caption']:
+                    await bot.delete_message(m.chat.id, m.message_id)
+                    await bot.send_photo(message.chat.id,
+                                         result['photo'],
+                                         caption=result['caption'],
+                                         parse_mode="HTML",
+                                         reply_markup=result['reply_markup'])
+                else:
+                    await bot.delete_message(m.chat.id, m.message_id)
+                    await bot.send_photo(message.chat.id,
+                                         result['photo'],
+                                         caption=result['caption'],
+                                         parse_mode="HTML")
         else:
             await bot.delete_message(m.chat.id, m.message_id)
             await bot.send_message(message.chat.id,
