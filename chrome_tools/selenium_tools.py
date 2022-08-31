@@ -9,6 +9,8 @@ from bs4 import BeautifulSoup
 
 from chrome_tools.fix_log import set_arsenic_log_level
 
+import os
+
 set_arsenic_log_level()
 
 
@@ -22,11 +24,12 @@ class Chrome:
 
         path_binary = r"C:\My_project\timetable_tusur\chrome_tools\chromedriver\chromedriver.exe"
         self.chromedriver = Chromedriver(binary=path_binary)
-        self.browser = browsers.Chrome(log_path='NUL')
+        self.browser = browsers.Chrome(log_path=os.devnull)
         self.browser.capabilities = {"goog:chromeOptions": {"args": ["--headless", "--window-size=1920,1080",
                                                                      "--disable-dev-shm-usage",
                                                                      "--disable-extensions", "--disable-gpu",
-                                                                     "--log-level=3", "--disable-notifications",
+                                                                     "--log-level=3" 
+                                                                     "--disable-notifications",
                                                                      "--disable-blink-features=AutomationControlled"]}}
 
     async def get_table(self, find_url):

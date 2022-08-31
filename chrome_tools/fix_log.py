@@ -4,7 +4,7 @@ import logging
 def set_arsenic_log_level(level=logging.FATAL):
     logger = logging.getLogger('arsenic')
     logger.setLevel(logging.FATAL)
-
+    logging.disable()
     def logger_factory():
         return logger
 
