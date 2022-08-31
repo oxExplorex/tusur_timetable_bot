@@ -6,7 +6,7 @@ from keyboards.inline import start_keyboard
 from loader import dp, bot
 
 from utils.db_api.sqlite import *
-from utils.other_func import clear_firstname
+
 
 @dp.message_handler(CommandStart(), state="*")
 async def bot_start(message: types.Message, state: FSMContext):

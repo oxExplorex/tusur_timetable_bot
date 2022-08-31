@@ -5,12 +5,11 @@ from arsenic.services import Chromedriver
 from arsenic.actions import Mouse, chain
 from arsenic import get_session
 
+from bs4 import BeautifulSoup
+
 from chrome_tools.fix_log import set_arsenic_log_level
 
 set_arsenic_log_level()
-
-from bs4 import BeautifulSoup
-
 
 
 class Chrome:
