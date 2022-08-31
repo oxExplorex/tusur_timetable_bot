@@ -3,4 +3,4 @@
 /workspace.xml
 /.idea/
 /data/db.db
-/data/
+/data/config.py
