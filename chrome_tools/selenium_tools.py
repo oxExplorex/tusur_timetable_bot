@@ -38,7 +38,7 @@ class Chrome:
                 await session.get(find_url)
                 await session.wait_for_element(20, 'html')
                 html = await session.get_page_source()
-
+                end_link = await session.get_url()
                 if "не дал результатов" in html:
                     return {"photo": "", "caption": "Парсинг не дал результатов, повторите попытку"}
                 elif "Результаты поиска" in html:
@@ -91,11 +91,27 @@ class Chrome:
                     more_info = soup.find("div", {"class": "col-md-12"}).text.replace("\n", "")
 
                     reply_markup = InlineKeyboardMarkup()
+                    reply_markup.add(InlineKeyboardButton(text="Schedule link", url=end_link))
                     reply_markup.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
+
+                    reply_markup2 = InlineKeyboardMarkup()
+                    reply_markup2.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
+
+                    caption2 = ""
+                    for i in range(1, 8):
+                        s = soup.find("tr", {"class": f"lesson_{i}"})
+                        span_info = s.find("div", {"class": "hidden for_print"})
+                        if span_info:
+                            note_info = span_info.find("span", {"class": "note"})
+                            if note_info:
+                                name_lesson = s.find("abbr").text
+                                caption2 += f"{note_info.text} - {name_lesson}\n"
 
                     return {"photo": await table.get_screenshot(),
                             "caption": f"{info}\n<code>{more_info}</code>",
-                            "reply_markup": reply_markup}
+                            "caption2": caption2,
+                            "reply_markup": reply_markup,
+                            "reply_markup2": reply_markup2}
                 elif "Расписание занятий преподавателя" in html:
                     target = await session.get_element(
                         '#wrapper > div:nth-child(9) > div.timetable_wrapper > div:nth-child(3) > div > ul > '
@@ -114,11 +130,27 @@ class Chrome:
                     more_info = soup.find("div", {"class": "col-md-12"}).text.replace("\n", "")
 
                     reply_markup = InlineKeyboardMarkup()
+                    reply_markup.add(InlineKeyboardButton(text="Schedule link", url=end_link))
                     reply_markup.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
 
+                    reply_markup2 = InlineKeyboardMarkup()
+                    reply_markup2.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
+
+                    caption2 = ""
+                    for i in range(1, 8):
+                        s = soup.find("tr", {"class": f"lesson_{i}"})
+                        span_info = s.find("div", {"class": "hidden for_print"})
+                        if span_info:
+                            note_info = span_info.find("span", {"class": "note"})
+                            if note_info:
+                                name_lesson = s.find("abbr").text
+                                caption2 += f"{note_info.text} - {name_lesson}\n"
+
                     return {"photo": await table.get_screenshot(),
-                            "caption": f"{info}\n<code>{more_info}</code>",
-                            "reply_markup": reply_markup}
+                            "caption": f"{info}\n<code>{more_info}</code>\n{end_link}",
+                            "caption2": caption2,
+                            "reply_markup": reply_markup,
+                            "reply_markup2": reply_markup2}
                 elif "Расписание занятий в аудитории" in html:
                     target = await session.get_element(
                         '#wrapper > div:nth-child(9) > div.timetable_wrapper > '
@@ -138,11 +170,27 @@ class Chrome:
                     more_info = soup.find("div", {"class": "col-md-12"}).text.replace("\n", "")
 
                     reply_markup = InlineKeyboardMarkup()
+                    reply_markup.add(InlineKeyboardButton(text="Schedule link", url=end_link))
                     reply_markup.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
+
+                    reply_markup2 = InlineKeyboardMarkup()
+                    reply_markup2.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
+
+                    caption2 = ""
+                    for i in range(1, 8):
+                        s = soup.find("tr", {"class": f"lesson_{i}"})
+                        span_info = s.find("div", {"class": "hidden for_print"})
+                        if span_info:
+                            note_info = span_info.find("span", {"class": "note"})
+                            if note_info:
+                                name_lesson = s.find("abbr").text
+                                caption2 += f"{note_info.text} - {name_lesson}\n"
 
                     return {"photo": await table.get_screenshot(),
                             "caption": f"{info}\n<code>{more_info}</code>",
-                            "reply_markup": reply_markup}
+                            "caption2": caption2,
+                            "reply_markup": reply_markup,
+                            "reply_markup2": reply_markup2}
                 else:
                     return {"photo": "", "caption": "Неизвестная ошибка"}
         except Exception as e:

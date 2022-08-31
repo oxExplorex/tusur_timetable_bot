@@ -38,6 +38,11 @@ async def input_name_handler(message: Message, state: FSMContext):
                                      caption=result['caption'],
                                      parse_mode="HTML",
                                      reply_markup=result['reply_markup'])
+                if result['caption2']:
+                    await bot.send_message(message.chat.id,
+                                           text=result['caption2'],
+                                           reply_markup=result['reply_markup2']
+                                           )
         else:
             await bot.delete_message(m.chat.id, m.message_id)
             await bot.send_message(message.chat.id,

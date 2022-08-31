@@ -14,7 +14,7 @@ async def delete_message_users(call: CallbackQuery):
     await bot.delete_message(call.message.chat.id, call.message.message_id)
 
 @dp.callback_query_handler(text_startswith="get_https://timetable.tusur.ru/", state="*")
-@dp.throttled(rate=5)
+@dp.throttled(rate=3)
 async def again_get_timetable(call: CallbackQuery, state: FSMContext):
     find_url = call.data[4:]
     message = call.message
@@ -34,6 +34,11 @@ async def again_get_timetable(call: CallbackQuery, state: FSMContext):
                                  caption=result['caption'],
                                  parse_mode="HTML",
                                  reply_markup=result['reply_markup'])
+            if result['caption2']:
+                await bot.send_message(message.chat.id,
+                                       text=result['caption2'],
+                                       reply_markup=result['reply_markup2']
+                                       )
 
     else:
         await bot.delete_message(m.chat.id, m.message_id)
@@ -50,7 +55,7 @@ async def back_neutral_state(call: CallbackQuery, state: FSMContext):
                                 reply_markup=start_keyboard)
 
 @dp.callback_query_handler(text="user_input", state="*")
-@dp.throttled(rate=4)
+@dp.throttled(rate=3)
 async def input_group_name(call: CallbackQuery, state: FSMContext):
     await bot.edit_message_text("Введите группу или ФИО преподавателя",
                                 call.message.chat.id,
