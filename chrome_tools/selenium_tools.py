@@ -1,9 +1,9 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from arsenic import browsers
-from arsenic.services import Chromedriver
-from arsenic.actions import Mouse, chain
-from arsenic import get_session
+from chrome_tools.arsenic import browsers
+from chrome_tools.arsenic.services import Chromedriver
+from chrome_tools.arsenic.actions import Mouse, chain
+from chrome_tools.arsenic import get_session
 
 from bs4 import BeautifulSoup
 
