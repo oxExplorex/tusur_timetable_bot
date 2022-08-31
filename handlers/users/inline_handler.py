@@ -14,7 +14,7 @@ async def delete_message_users(call: CallbackQuery):
     await bot.delete_message(call.message.chat.id, call.message.message_id)
 
 @dp.callback_query_handler(text_startswith="get_https://timetable.tusur.ru/", state="*")
-@dp.throttled(rate=10)
+@dp.throttled(rate=5)
 async def again_get_timetable(call: CallbackQuery, state: FSMContext):
     find_url = call.data[4:]
     message = call.message
