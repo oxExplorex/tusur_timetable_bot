@@ -51,7 +51,7 @@ async def back_neutral_state(call: CallbackQuery, state: FSMContext):
                                 reply_markup=start_keyboard)
 
 @dp.callback_query_handler(text="user_input", state="*")
-@dp.throttled(rate=5)
+@dp.throttled(rate=4)
 async def input_group_name(call: CallbackQuery, state: FSMContext):
     await bot.edit_message_text("Введите группу или ФИО преподавателя",
                                 call.message.chat.id,

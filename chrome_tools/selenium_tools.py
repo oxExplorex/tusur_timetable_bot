@@ -5,17 +5,13 @@ from arsenic.services import Chromedriver
 from arsenic.actions import Mouse, chain
 from arsenic import get_session
 
+from chrome_tools.fix_log import set_arsenic_log_level
+
+set_arsenic_log_level()
+
 from bs4 import BeautifulSoup
-import structlog
-import logging
 
-logger = logging.getLogger('arsenic')
 
-def logger_factory():
-    return logger
-
-structlog.configure(logger_factory=logger_factory)
-logger.setLevel(logging.WARNING)
 
 class Chrome:
     def __init__(self):
@@ -27,7 +23,7 @@ class Chrome:
 
         path_binary = r"C:\My_project\timetable_tusur\chrome_tools\chromedriver\chromedriver.exe"
         self.chromedriver = Chromedriver(binary=path_binary)
-        self.browser = browsers.Chrome()
+        self.browser = browsers.Chrome(log_path='NUL')
         self.browser.capabilities = {"goog:chromeOptions": {"args": ["--headless", "--window-size=1920,1080",
                                                                      "--disable-dev-shm-usage",
                                                                      "--disable-extensions", "--disable-gpu",

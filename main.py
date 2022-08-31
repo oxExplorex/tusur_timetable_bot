@@ -1,17 +1,19 @@
-from aiogram import executor
-
-import filters
-import middlewares
-from handlers import dp
-
 from utils.set_bot_commands import set_default_commands
+
+from handlers import dp
+import middlewares
+import filters
+
+from aiogram import executor
+from loguru import logger
+
 
 async def on_startup(dp):
     filters.setup(dp)
     middlewares.setup(dp)
 
     await set_default_commands(dp)
-    print("~~~~~ Bot was started ~~~~~")
+    logger.info("Bot was started")
 
 
 if __name__ == "__main__":
