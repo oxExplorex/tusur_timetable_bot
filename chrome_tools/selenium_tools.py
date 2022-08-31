@@ -111,6 +111,25 @@ class Chrome:
                     more_info = soup.find("div", {"class": "col-md-12"}).text.replace("\n", "")
 
                     return {"photo": await table.get_screenshot(), "caption": f"{info}\n<code>{more_info}</code>"}
+                elif "Расписание занятий в аудитории" in html:
+                    target = await session.get_element(
+                        '#wrapper > div:nth-child(9) > div.timetable_wrapper > '
+                        'div:nth-child(3) > div > ul > '
+                        'li.training_type_practice.new-training-type-practice.margin-bottom-10')
+
+                    mouse = Mouse()
+                    actions = chain(mouse.move_to(target))
+                    await session.perform_actions(actions)
+
+                    table = await session.get_element(
+                        '#wrapper > div:nth-child(9) > div.timetable_wrapper > div:nth-child(3) > div')
+
+
+                    soup = BeautifulSoup(html, "lxml")
+                    info = soup.find("title").text.split(" — ")[0]
+                    more_info = soup.find("div", {"class": "col-md-12"}).text.replace("\n", "")
+
+                    return {"photo": await table.get_screenshot(), "caption": f"{info}\n<code>{more_info}</code>"}
                 else:
                     return {"photo": "", "caption": "Неизвестная ошибка"}
         except Exception as e:

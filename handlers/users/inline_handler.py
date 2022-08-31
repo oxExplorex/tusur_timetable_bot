@@ -15,6 +15,7 @@ async def delete_message_users(call: CallbackQuery):
     await bot.delete_message(call.message.chat.id, call.message.message_id)
 
 @dp.callback_query_handler(text_startswith="get_https://timetable.tusur.ru/", state="*")
+@dp.throttled(rate=2)
 async def again_get_timetable(call: CallbackQuery, state: FSMContext):
     find_url = call.data[4:]
     message = call.message
@@ -38,7 +39,7 @@ async def again_get_timetable(call: CallbackQuery, state: FSMContext):
             else:
                 await bot.delete_message(m.chat.id, m.message_id)
                 reply_markup = InlineKeyboardMarkup()
-                reply_markup.add(InlineKeyboardButton(text="Delete", callback_data="delete_message"))
+                reply_markup.add(InlineKeyboardButton(text="✖️", callback_data="delete_message"))
                 await bot.send_photo(message.chat.id,
                                      result['photo'],
                                      caption=result['caption'],
