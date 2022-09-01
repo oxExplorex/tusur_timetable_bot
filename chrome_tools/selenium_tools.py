@@ -25,7 +25,7 @@ class Chrome:
         path_binary = r"C:\My_project\timetable_tusur\chrome_tools\chromedriver\chromedriver.exe"
         self.chromedriver = Chromedriver(binary=path_binary)
         self.browser = browsers.Chrome(log_path=os.devnull)
-        self.browser.capabilities = {"goog:chromeOptions": {"args": ["--headless", "--window-size=1920,1080",
+        self.browser.capabilities = {"goog:chromeOptions": {"args": [ "--headless", "--window-size=1920,1080",
                                                                      "--disable-dev-shm-usage",
                                                                      "--disable-extensions", "--disable-gpu",
                                                                      "--log-level=3" 
@@ -59,8 +59,7 @@ class Chrome:
                     if temp_button:
                         ltb = len(temp_button)
                         if ltb == 1:
-                            a = temp_button
-                            reply_markup.add(a)
+                            reply_markup.add(temp_button[0])
                         elif ltb == 2:
                             a, b = temp_button
                             reply_markup.add(a, b)

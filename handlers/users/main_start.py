@@ -8,7 +8,7 @@ from loader import dp, bot
 from utils.db_api.sqlite import *
 
 
-@dp.message_handler(CommandStart(), IsPrivate(), state="*")
+@dp.message_handler(CommandStart(), state="*")
 async def bot_start(message: types.Message, state: FSMContext):
     await state.finish()
     get_user_id = get_user(user_id=message.from_user.id)
