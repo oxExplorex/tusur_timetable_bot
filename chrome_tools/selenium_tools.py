@@ -1,13 +1,13 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
 from chrome_tools.arsenic import browsers
 from chrome_tools.arsenic.services import Chromedriver
 from chrome_tools.arsenic.actions import Mouse, chain
 from chrome_tools.arsenic import get_session
 
-from bs4 import BeautifulSoup
-
 from chrome_tools.fix_log import set_arsenic_log_level
+
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from data.config import PATH_BINARY
+from bs4 import BeautifulSoup
 
 import os
 
@@ -21,9 +21,7 @@ class Chrome:
         self.chrome_options.add_experimental_option("prefs",
                                                     {"profile.default_content_setting_values.notifications": 2})"""
 
-
-        path_binary = r"C:\My_project\timetable_tusur\chrome_tools\chromedriver\chromedriver.exe"
-        self.chromedriver = Chromedriver(binary=path_binary)
+        self.chromedriver = Chromedriver(binary=PATH_BINARY)
         self.browser = browsers.Chrome(log_path=os.devnull)
         self.browser.capabilities = {"goog:chromeOptions": {"args": [ "--headless", "--window-size=1920,1080",
                                                                      "--disable-dev-shm-usage",

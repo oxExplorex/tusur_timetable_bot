@@ -1,4 +1,6 @@
-BOT_TOKEN = "5416395354:AAGgu1bLRO2pJ_ZHlJIG_miGMGlcVt7SF6E"
+BOT_TOKEN = "123:123"
 
 admins = []
+
+PATH_BINARY = r"C:\My_project\timetable_tusur\chrome_tools\chromedriver\chromedriver.exe"
 
