@@ -23,7 +23,7 @@ class Chrome:
 
         self.chromedriver = Chromedriver(binary=PATH_BINARY)
         self.browser = browsers.Chrome(log_path=os.devnull)
-        self.browser.capabilities = {"goog:chromeOptions": {"args": [ "--headless", "--window-size=1920,1080",
+        self.browser.capabilities = {"goog:chromeOptions": {"args": ["--headless", "--window-size=1920,1080",
                                                                      "--disable-dev-shm-usage",
                                                                      "--disable-extensions", "--disable-gpu",
                                                                      "--log-level=3" 
@@ -34,7 +34,7 @@ class Chrome:
         try:
             async with get_session(self.chromedriver, self.browser) as session:
                 await session.get(find_url)
-                await session.wait_for_element(20, 'html')
+                await session.wait_for_element(30, 'html')
                 html = await session.get_page_source()
                 end_link = await session.get_url()
                 if "не дал результатов" in html:
@@ -189,7 +189,7 @@ class Chrome:
                             "reply_markup": reply_markup,
                             "reply_markup2": reply_markup2}
                 else:
-                    return {"photo": "", "caption": "Неизвестная ошибка"}
+                    return {"photo": "", "caption": "Неизвестная ошибка, повторите запрос"}
         except Exception as e:
             print(e)
             return False

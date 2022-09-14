@@ -5,7 +5,7 @@ start_keyboard.add(InlineKeyboardButton(text="Ввести группу или �
 start_keyboard.add(InlineKeyboardButton(text="Настроить быстрый ввод (only admin)", callback_data="setting_group"))
 start_keyboard.add(InlineKeyboardButton(text="Подписаться на расписание (only admin)", callback_data="subject_timetable"))
 
-
+# back_button
 back_keyboard = InlineKeyboardMarkup()
 back_keyboard.add(InlineKeyboardButton(text="Отмена", callback_data="back_button"))
 
