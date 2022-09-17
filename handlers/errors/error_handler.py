@@ -5,8 +5,10 @@ from aiogram.utils.exceptions import (Unauthorized, InvalidQueryID, TelegramAPIE
                                       CantDemoteChatCreator, MessageNotModified, MessageToDeleteNotFound,
                                       MessageTextIsEmpty, RetryAfter, CantParseEntities, MessageCantBeDeleted,
                                       TerminatedByOtherGetUpdates, BotBlocked)
-
+from loguru import logger
 from loader import dp
+
+import traceback
 
 @dp.errors_handler()
 async def errors_handler(update, exception):
@@ -21,17 +23,14 @@ async def errors_handler(update, exception):
 
     # Блокировка бота пользователем
     if isinstance(exception, BotBlocked):
-        # logging.exception(f"BotBlocked: {exception}\nUpdate: {update}")
         return True
 
     # Не удалось удалить сообщение
     if isinstance(exception, MessageCantBeDeleted):
-        logging.exception(f"MessageCantBeDeleted: {exception}\nUpdate: {update}")
         return True
 
     # Сообщение для удаления не было найдено
     if isinstance(exception, MessageToDeleteNotFound):
-        # logging.exception(f"MessageToDeleteNotFound: {exception}\nUpdate: {update}")
         return True
 
     # Сообщение пустое
@@ -73,10 +72,6 @@ async def errors_handler(update, exception):
                                                   parse_mode="Markdown")
         return True
 
-    # Ошибка телеграм АПИ
-    if isinstance(exception, TelegramAPIError):
-        logging.exception(f"TelegramAPIError: {exception}\nUpdate: {update}")
-        return True
 
-    # Все прочие ошибки
-    logging.exception(f"Update: {update} \n{exception}")
+
+    print(traceback.format_exc())
