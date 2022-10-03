@@ -11,7 +11,7 @@ def get_week_year() -> str:
     return datetime.now(tz_nairobi).strftime("%y_%W")
 
 def get_time_update() -> str:
-    return datetime.now(tz_nairobi).strftime(f"%X.{randint(10,99)}")
+    return datetime.now(tz_nairobi).strftime(f"{get_time_now()} %X.{randint(10,99)}")
 
 def check_week(date: str) -> bool:
     d, m, g = date.split("_")
