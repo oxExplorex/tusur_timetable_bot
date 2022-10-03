@@ -10,7 +10,7 @@ from utils.db_api.sqlite import select_fast_answer_by_url, create_fast_answer_by
     update_fast_answer_information
 
 from urllib.parse import unquote
-from utils.times import get_time_now
+from utils.times import check_week
 from loader import dp, bot
 
 import ujson
@@ -84,7 +84,7 @@ async def again_get_timetable(call: CallbackQuery, state: FSMContext):
     m = await bot.send_message(message.chat.id, "Начинаю парсинг...")
 
     if not get_info_by_url or \
-            (get_time_now() != get_info_by_url[0][3]) or \
+            not(check_week(get_info_by_url[0][3])) or \
             ("error" in ujson.loads(get_info_by_url[0][1].replace("'", '"'))):
 
         new_find = True
@@ -145,7 +145,8 @@ async def input_group_name(call: CallbackQuery, state: FSMContext):
                                 reply_markup=back_keyboard)
     await StorageUsers.input_name.set()
     async with state.proxy() as data:
-        data["input_name"] = {"chat_id": call.message.chat.id,
-                              "message_id": call.message.message_id
+        data["input_name"] = {
+                "chat_id": call.message.chat.id,
+                "message_id": call.message.message_id
         }
 

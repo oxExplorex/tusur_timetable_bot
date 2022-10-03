@@ -13,12 +13,12 @@ import traceback
 @dp.errors_handler()
 async def errors_handler(update, exception):
     if isinstance(exception, CantDemoteChatCreator):
-        logging.exception(f"CantDemoteChatCreator: {exception}\nUpdate: {update}")
+        logger.error(exception)
         return True
 
     # Не удалось изменить сообщение
     if isinstance(exception, MessageNotModified):
-        logging.exception(f"MessageNotModified: {exception}\nUpdate: {update}")
+        logger.error(exception)
         return True
 
     # Блокировка бота пользователем
@@ -27,45 +27,48 @@ async def errors_handler(update, exception):
 
     # Не удалось удалить сообщение
     if isinstance(exception, MessageCantBeDeleted):
+        logger.error(exception)
         return True
 
     # Сообщение для удаления не было найдено
     if isinstance(exception, MessageToDeleteNotFound):
+        logger.error(exception)
         return True
 
     # Сообщение пустое
     if isinstance(exception, MessageTextIsEmpty):
-        logging.exception(f"MessageTextIsEmpty: {exception}\nUpdate: {update}")
+        logger.error(exception)
         return True
 
     # Пользователь удалён
     if isinstance(exception, UserDeactivated):
+        logger.error(exception)
         return True
 
     # Бот не авторизован
     if isinstance(exception, Unauthorized):
-        logging.exception(f"Unauthorized: {exception}\nUpdate: {update}")
+        logger.error(exception)
         return True
 
     # Неверный Query ID
     if isinstance(exception, InvalidQueryID):
-        logging.exception(f"InvalidQueryID: {exception}\nUpdate: {update}")
+        logger.error(exception)
         return True
 
     # Повторите попытку позже
     if isinstance(exception, RetryAfter):
-        logging.exception(f"RetryAfter: {exception}\nUpdate: {update}")
+        logger.error(exception)
         return True
 
     # Уже имеется запущенный бот
     if isinstance(exception, TerminatedByOtherGetUpdates):
         print("You already have an active bot. Turn it off.")
-        logging.exception(f"TerminatedByOtherGetUpdates: {exception}\nUpdate: {update}")
+        logger.error(exception)
         return True
 
     # Ошибка в HTML/MARKDOWN разметке
     if isinstance(exception, CantParseEntities):
-        logging.exception(f"CantParseEntities: {exception}\nUpdate: {update}")
+        logger.error(exception)
         await Update.get_current().message.answer(f"❗ Ошибка HTML разметки\n"
                                                   f"`▶ {exception.args}`\n"
                                                   f"❕ Выполните заново действие с правильной разметкой тэгов.",
@@ -73,5 +76,5 @@ async def errors_handler(update, exception):
         return True
 
 
-
+    logger.error(exception)
     print(traceback.format_exc())

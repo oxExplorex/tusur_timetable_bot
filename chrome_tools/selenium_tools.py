@@ -16,6 +16,8 @@ from data.config import PATH_BINARY
 from urllib.parse import unquote
 from bs4 import BeautifulSoup
 
+from loguru import logger
+
 import ujson
 import os
 
@@ -57,6 +59,7 @@ class Chrome:
                 if "не дал результатов" in html:
                     result_dict['caption'] = 'Парсинг не дал результатов, повторите попытку'
                     result_dict['end_link'] = end_link
+                    await session.close()
                     return result_dict
                 elif "Результаты поиска" in html:
                     table = await session.get_element(
@@ -91,7 +94,7 @@ class Chrome:
                     result_dict['caption'] = "Выберете один их предложенных вариантов"
                     result_dict['reply_markup'] = ujson.loads(reply_markup.as_json())
                     result_dict['end_link'] = end_link
-
+                    await session.close()
                     return result_dict
                 elif "Расписание занятий группы" in html:
                     target = await session.get_element(
@@ -135,7 +138,7 @@ class Chrome:
                     result_dict['reply_markup'] = ujson.loads(reply_markup.as_json())
                     result_dict['reply_markup2'] = ujson.loads(reply_markup2.as_json())
                     result_dict['end_link'] = end_link
-
+                    await session.close()
                     return result_dict
                 elif "Расписание занятий преподавателя" in html:
                     target = await session.get_element(
@@ -179,7 +182,7 @@ class Chrome:
                     result_dict['reply_markup'] = ujson.loads(reply_markup.as_json())
                     result_dict['reply_markup2'] = ujson.loads(reply_markup2.as_json())
                     result_dict['end_link'] = end_link
-
+                    await session.close()
                     return result_dict
                 elif "Расписание занятий в аудитории" in html:
                     target = await session.get_element(
@@ -225,16 +228,17 @@ class Chrome:
                     result_dict['reply_markup'] = ujson.loads(reply_markup.as_json())
                     result_dict['reply_markup2'] = ujson.loads(reply_markup2.as_json())
                     result_dict['end_link'] = end_link
-
+                    await session.close()
                     return result_dict
                 else:
 
                     result_dict['caption'] = "Неизвестная ошибка, повторите запрос"
                     result_dict['end_link'] = end_link
                     result_dict['error'] = ""
-
+                    await session.close()
                     return result_dict
+
         except Exception as e:
-            print(e)
+            logger.error(e)
             return False
 

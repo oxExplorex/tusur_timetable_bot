@@ -1,7 +1,5 @@
-import json
-
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, InputFile
+from aiogram.types import Message
 
 from states.state_users import StorageUsers
 from keyboards.inline import start_keyboard
@@ -11,7 +9,7 @@ from chrome_tools.selenium_tools import Chrome
 from utils.db_api.sqlite import select_fast_answer_by_request, create_fast_answer_by_request, \
     select_fast_answer_by_url, update_fast_answer_information, update_fast_answer_information_by_text
 
-from utils.times import get_time_now
+from utils.times import check_week
 
 from loader import dp, bot
 import ujson
@@ -37,13 +35,13 @@ async def input_name_handler(message: Message, state: FSMContext):
         m = await bot.send_message(message.chat.id, "Начинаю парсинг...")
 
         if not get_info_by_text or \
-                (get_time_now() != get_info_by_text[0][3]) or \
-                ("error" in ujson.loads(get_info_by_text[0][1].replace("'", '"'))):
+                ("error" in ujson.loads(get_info_by_text[0][1].replace("'", '"'))) or \
+                not(check_week(get_info_by_text[0][3])):
 
-            new_find = True
+                new_find = True
 
-            http = Chrome()
-            result = await http.get_table(find_url)
+                http = Chrome()
+                result = await http.get_table(find_url)
         else:
             result = ujson.loads(get_info_by_text[0][1].replace("'", '"'))
 
